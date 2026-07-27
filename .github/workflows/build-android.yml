@@ -8,7 +8,7 @@ on:
 
 # ── Update GODOT_VERSION to match your project.godot features string ──────────
 env:
-  GODOT_VERSION: "4.5"        # Change to your Godot version (e.g. 4.5, 4.6, 4.7)
+  GODOT_VERSION: "4.7"        # Must match project.godot config/features version string
   GODOT_STATUS: "stable"      # stable | rc1 | beta1 etc.
   EXPORT_PRESET: "Android 2"  # Preset name in export_presets.cfg
   EXPORT_FILE: "rumahantu.apk"
@@ -77,13 +77,16 @@ jobs:
       - name: Write Godot editor settings
         run: |
           mkdir -p ~/.config/godot
-          cat > ~/.config/godot/editor_settings-4.tres << 'SETTINGS'
+          # Use ${HOME} so the path resolves correctly for any runner user
+          cat > ~/.config/godot/editor_settings-4.tres << SETTINGS
           [gd_resource type="EditorSettings" format=3]
           [resource]
-          export/android/debug_keystore = "/root/.android/debug.keystore"
+          export/android/debug_keystore = "${HOME}/.android/debug.keystore"
           export/android/debug_keystore_user = "androiddebugkey"
           export/android/debug_keystore_pass = "android"
           SETTINGS
+          # Verify the keystore exists at the expected path
+          ls -lh "${HOME}/.android/debug.keystore"
 
       # ── 7. Import all project assets ────────────────────────────────────────
       - name: Import project assets
