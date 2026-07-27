@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="beam_glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <linearGradient id="body_front" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff"/>
+      <stop offset="100%" style="stop-color:#bbccdd"/>
+    </linearGradient>
+    <linearGradient id="body_right" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#4477aa"/>
+      <stop offset="100%" style="stop-color:#223355"/>
+    </linearGradient>
+    <linearGradient id="head_front" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff"/>
+      <stop offset="100%" style="stop-color:#99bbdd"/>
+    </linearGradient>
+    <radialGradient id="beam" cx="0%" cy="50%" r="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.9"/>
+      <stop offset="60%" style="stop-color:#aaddff;stop-opacity:0.3"/>
+      <stop offset="100%" style="stop-color:#aaddff;stop-opacity:0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Light beam cone (behind flashlight body, so draw first) -->
+  <polygon points="102,56 102,72 126,22 126,106"
+           fill="url(#beam)" filter="url(#beam_glow)" opacity="0.5"/>
+
+  <!-- Shadow -->
+  <g opacity="0.2" transform="translate(4,5)">
+    <rect x="14" y="52" width="58" height="24" rx="10" fill="black"/>
+    <polygon points="72,46 102,38 102,90 72,82" fill="black"/>
+  </g>
+
+  <!-- Right side of barrel (head) -->
+  <polygon points="102,42 112,46 112,82 102,86" fill="url(#body_right)"/>
+  <!-- Bottom of barrel -->
+  <polygon points="72,86 102,86 112,82 82,82" fill="#334466" opacity="0.9"/>
+
+  <!-- Right side of body -->
+  <rect x="70" y="60" width="10" height="8" rx="4" fill="#4477aa" transform="skewX(-20)"/>
+  <!-- Bottom of body -->
+  <polygon points="14,76 72,76 72,82 14,82" fill="#334466" opacity="0.8"/>
+
+  <!-- Barrel (flashlight head) front face -->
+  <polygon points="72,42 102,42 102,86 72,86" rx="4"
+           fill="url(#head_front)" filter="url(#glow)"/>
+
+  <!-- Body (handle) front face -->
+  <rect x="14" y="52" width="60" height="24" rx="10" fill="url(#body_front)" filter="url(#glow)"/>
+
+  <!-- Lens/bulb -->
+  <circle cx="102" cy="64" r="10" fill="#ffffee" opacity="0.95" filter="url(#glow)"/>
+  <circle cx="102" cy="64" r="6" fill="white"/>
+
+  <!-- Grip lines on handle -->
+  <line x1="30" y1="54" x2="30" y2="74" stroke="#6699bb" stroke-width="2" opacity="0.4"/>
+  <line x1="42" y1="54" x2="42" y2="74" stroke="#6699bb" stroke-width="2" opacity="0.4"/>
+  <line x1="54" y1="54" x2="54" y2="74" stroke="#6699bb" stroke-width="2" opacity="0.4"/>
+
+  <!-- Highlight edge on body top -->
+  <line x1="14" y1="54" x2="72" y2="54" stroke="#ddeeff" stroke-width="1.5" opacity="0.6"/>
+  <line x1="14" y1="54" x2="14" y2="74" stroke="#ddeeff" stroke-width="1.5" opacity="0.5"/>
+</svg>

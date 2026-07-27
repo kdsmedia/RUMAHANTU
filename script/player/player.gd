@@ -26,7 +26,11 @@ var look_pitch := 0.0
 
 
 func _ready() -> void:
-	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	# On Android/iOS there is no physical mouse to capture; hide the cursor instead.
+	if OS.get_name() in ["Android", "iOS"]:
+		Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
+	else:
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	base_camera_position = camera_mount.position
 	camera.near = 0.05
 	camera.cull_mask &= ~FIRST_PERSON_HIDDEN_LAYER
@@ -46,6 +50,7 @@ func _input(event: InputEvent) -> void:
 func _physics_process(delta: float) -> void:
 	fps_label.text = "FPS: %d" % Engine.get_frames_per_second()
 	_handle_interaction()
+	_handle_touch_camera_look()
 
 	is_running = Input.is_action_pressed("run")
 	var speed := RUN_SPEED if is_running else WALKING_SPEED
@@ -133,6 +138,22 @@ func _hide_from_first_person_camera(node: Node) -> void:
 
 	for child in node.get_children():
 		_hide_from_first_person_camera(child)
+
+
+func _handle_touch_camera_look() -> void:
+	# Driven by the right-side LookJoystick via look_left/right/up/down actions.
+	# Uses a separate sensitivity so mobile feel can be tuned independently.
+	var look_dir := Input.get_vector("look_left", "look_right", "look_up", "look_down")
+	if look_dir.length() < 0.01:
+		return
+	const TOUCH_SENSITIVITY := 3.0
+	rotate_y(deg_to_rad(-look_dir.x * TOUCH_SENSITIVITY))
+	visuals.rotate_y(deg_to_rad(look_dir.x * TOUCH_SENSITIVITY))
+	look_pitch = clamp(
+		look_pitch + deg_to_rad(-look_dir.y * TOUCH_SENSITIVITY),
+		MIN_LOOK_ANGLE, MAX_LOOK_ANGLE
+	)
+	camera_mount.rotation.x = look_pitch
 
 
 func _set_flashlight_visible(visible: bool) -> void:

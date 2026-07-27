@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <linearGradient id="front" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff"/>
+      <stop offset="100%" style="stop-color:#cce8ff"/>
+    </linearGradient>
+    <linearGradient id="side" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#5588bb"/>
+      <stop offset="100%" style="stop-color:#224477"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Shadow -->
+  <g opacity="0.2" transform="translate(4,5)">
+    <!-- index finger -->
+    <rect x="55" y="12" width="16" height="44" rx="8" fill="black"/>
+    <!-- middle finger -->
+    <rect x="37" y="28" width="15" height="38" rx="7" fill="black"/>
+    <!-- ring finger -->
+    <rect x="75" y="30" width="15" height="36" rx="7" fill="black"/>
+    <!-- pinky -->
+    <rect x="21" y="38" width="13" height="30" rx="6" fill="black"/>
+    <!-- palm -->
+    <path d="M18 62 Q18 100 64 104 Q110 100 110 62 L110 56 L18 56 Z" fill="black"/>
+  </g>
+
+  <!-- Depth sides -->
+  <!-- index finger right side -->
+  <rect x="71" y="16" width="6" height="40" rx="3" fill="url(#side)"/>
+  <!-- middle finger right side -->
+  <rect x="52" y="32" width="5" height="34" rx="2" fill="url(#side)"/>
+  <!-- ring finger right side -->
+  <rect x="90" y="34" width="5" height="32" rx="2" fill="url(#side)"/>
+  <!-- pinky right side -->
+  <rect x="34" y="42" width="4" height="26" rx="2" fill="url(#side)"/>
+  <!-- palm right side -->
+  <path d="M110 62 L116 66 Q116 104 68 108 L64 104 Q110 100 110 62Z" fill="#4477aa"/>
+
+  <!-- Front faces -->
+  <!-- Pinky (leftmost) -->
+  <rect x="21" y="38" width="13" height="30" rx="6" fill="url(#front)" filter="url(#glow)"/>
+  <!-- Middle finger -->
+  <rect x="37" y="28" width="15" height="38" rx="7" fill="url(#front)" filter="url(#glow)"/>
+  <!-- Index finger (tallest - pointing up) -->
+  <rect x="55" y="12" width="16" height="44" rx="8" fill="url(#front)" filter="url(#glow)"/>
+  <!-- Ring finger -->
+  <rect x="75" y="30" width="15" height="36" rx="7" fill="url(#front)" filter="url(#glow)"/>
+  <!-- Palm -->
+  <path d="M18 62 Q18 100 64 104 Q110 100 110 62 L110 56 L18 56 Z"
+        fill="url(#front)" filter="url(#glow)"/>
+
+  <!-- Glow dot at fingertip -->
+  <circle cx="63" cy="16" r="5" fill="#aaddff" opacity="0.8"/>
+  <!-- Highlight lines -->
+  <line x1="63" y1="14" x2="63" y2="52" stroke="#ddeeff" stroke-width="1.5" opacity="0.5"/>
+</svg>

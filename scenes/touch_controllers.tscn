@@ -1,16 +1,146 @@
-[gd_scene load_steps=2 format=3 uid="uid://ca3fpngi8vwlk"]
+[gd_scene load_steps=8 format=3 uid="uid://ca3fpngi8vwlk"]
 
 [ext_resource type="PackedScene" uid="uid://dmr0fcamx7t56" path="res://addons/virtual_joystick/virtual_joystick_scene.tscn" id="1_j3kvq"]
+[ext_resource type="Script" uid="uid://cxmqpw5r8nj7v" path="res://script/ui/action_button.gd" id="2_abtn"]
+[ext_resource type="CompressedTexture2D" uid="uid://djmp4qr8xnz01" path="res://assets/Icons/btn_jump.svg" id="3_jump"]
+[ext_resource type="CompressedTexture2D" uid="uid://drun2ym5lkw02" path="res://assets/Icons/btn_run.svg" id="4_run"]
+[ext_resource type="CompressedTexture2D" uid="uid://dfls9np2mxz05" path="res://assets/Icons/btn_flash.svg" id="5_flash"]
+[ext_resource type="CompressedTexture2D" uid="uid://dinv6ms4qry04" path="res://assets/Icons/btn_inventory.svg" id="6_inv"]
+[ext_resource type="CompressedTexture2D" uid="uid://dint7kn3pqx03" path="res://assets/Icons/btn_interact.svg" id="7_interact"]
+
+; ─── Layout ─────────────────────────────────────────────────────────────────
+; Left half   → MoveJoystick (DYNAMIC) · Jump & Run buttons above thumb zone
+; Right half  → LookJoystick (DYNAMIC) · Flash, Inventory, Interact above thumb
+; All nodes   → modulate alpha 0.55  (see-through, non-intrusive)
+; Buttons     → flat=true + expand_icon=true → pure 3D icon, no box border
+; ─────────────────────────────────────────────────────────────────────────────
 
 [node name="TouchControllers" type="CanvasLayer"]
 
-[node name="Virtual Joystick" parent="." instance=ExtResource("1_j3kvq")]
-offset_top = -150.0
-offset_bottom = 150.0
-scale = Vector2(0.5, 0.5)
-pressed_color = Color(0.7472141, 0.7045988, 0.9666229, 1)
+; ── LEFT joystick: movement ───────────────────────────────────────────────────
+[node name="MoveJoystick" parent="." instance=ExtResource("1_j3kvq")]
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+modulate = Color(1, 1, 1, 0.55)
+joystick_mode = 1
 visibility_mode = 0
-action_left = "left"
-action_right = "right"
+; NOTE: player.gd reads Input.get_vector("right","left","forward","back") —
+; action names are intentionally swapped to match AZERTY key layout.
+; Joystick must mirror that swap so drag-left = strafe-left, drag-right = strafe-right.
+action_left = "right"
+action_right = "left"
 action_up = "forward"
 action_down = "back"
+
+; ── RIGHT joystick: camera look ───────────────────────────────────────────────
+[node name="LookJoystick" parent="." instance=ExtResource("1_j3kvq")]
+anchor_left = 0.5
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+modulate = Color(1, 1, 1, 0.55)
+joystick_mode = 1
+visibility_mode = 0
+action_left = "look_left"
+action_right = "look_right"
+action_up = "look_up"
+action_down = "look_down"
+
+; ══════════════════════════════════════════════════════════════════════════════
+; ACTION BUTTONS  (rendered after joysticks → on top → consume touch first)
+; Size: 90×90 px.  flat=true removes the box border; only the 3D icon shows.
+; ══════════════════════════════════════════════════════════════════════════════
+
+; ── LEFT buttons: Jump & Run ──────────────────────────────────────────────────
+
+[node name="JumpBtn" type="Button" parent="."]
+anchor_left = 0.0
+anchor_right = 0.0
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -300.0
+offset_right = 110.0
+offset_bottom = -210.0
+modulate = Color(1, 1, 1, 0.6)
+flat = true
+expand_icon = true
+icon = ExtResource("3_jump")
+script = ExtResource("2_abtn")
+input_action = "ui_accept"
+
+[node name="RunBtn" type="Button" parent="."]
+anchor_left = 0.0
+anchor_right = 0.0
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 120.0
+offset_top = -300.0
+offset_right = 210.0
+offset_bottom = -210.0
+modulate = Color(1, 1, 1, 0.6)
+flat = true
+expand_icon = true
+icon = ExtResource("4_run")
+script = ExtResource("2_abtn")
+input_action = "run"
+
+; ── RIGHT buttons: Flashlight · Inventory · Interact ─────────────────────────
+
+[node name="FlashBtn" type="Button" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -330.0
+offset_top = -300.0
+offset_right = -240.0
+offset_bottom = -210.0
+modulate = Color(1, 1, 1, 0.6)
+flat = true
+expand_icon = true
+icon = ExtResource("5_flash")
+script = ExtResource("2_abtn")
+input_action = "flash"
+
+[node name="InventoryBtn" type="Button" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -220.0
+offset_top = -300.0
+offset_right = -130.0
+offset_bottom = -210.0
+modulate = Color(1, 1, 1, 0.6)
+flat = true
+expand_icon = true
+icon = ExtResource("6_inv")
+script = ExtResource("2_abtn")
+input_action = "Inventory"
+
+[node name="InteractBtn" type="Button" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -110.0
+offset_top = -300.0
+offset_right = -20.0
+offset_bottom = -210.0
+modulate = Color(1, 1, 1, 0.6)
+flat = true
+expand_icon = true
+icon = ExtResource("7_interact")
+script = ExtResource("2_abtn")
+input_action = "interact"

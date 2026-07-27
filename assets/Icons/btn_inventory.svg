@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <linearGradient id="front" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff"/>
+      <stop offset="100%" style="stop-color:#cce8ff"/>
+    </linearGradient>
+    <linearGradient id="right" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#5588bb"/>
+      <stop offset="100%" style="stop-color:#224477"/>
+    </linearGradient>
+    <linearGradient id="top" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#88aacc"/>
+      <stop offset="100%" style="stop-color:#5588bb"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Shadow -->
+  <g opacity="0.2" transform="translate(4,5)">
+    <rect x="20" y="36" width="76" height="76" rx="6" fill="black"/>
+    <path d="M48 36 Q48 18 64 18 Q80 18 80 36" fill="none" stroke="black" stroke-width="9" stroke-linecap="round"/>
+  </g>
+
+  <!-- RIGHT side face of bag body -->
+  <polygon points="96,40 108,32 108,104 96,112" fill="url(#right)"/>
+
+  <!-- TOP face of bag body -->
+  <polygon points="20,36 96,36 108,28 32,28" fill="url(#top)"/>
+
+  <!-- Strap right side -->
+  <path d="M80 36 Q80 18 64 18 Q48 18 48 36" fill="none" stroke="#4477aa" stroke-width="5"/>
+
+  <!-- Front face: bag body -->
+  <rect x="20" y="36" width="76" height="76" rx="6" fill="url(#front)" filter="url(#glow)"/>
+
+  <!-- Strap front -->
+  <path d="M80 36 Q80 18 64 18 Q48 18 48 36"
+        fill="none" stroke="url(#front)" stroke-width="9" stroke-linecap="round" filter="url(#glow)"/>
+
+  <!-- Clasp -->
+  <rect x="52" y="22" width="24" height="8" rx="4" fill="#aaddff" opacity="0.9"/>
+
+  <!-- Pocket on bag -->
+  <rect x="34" y="60" width="48" height="38" rx="4" fill="none" stroke="#aaddff" stroke-width="2" opacity="0.6"/>
+
+  <!-- Grid lines on bag (inventory slots) -->
+  <line x1="58" y1="60" x2="58" y2="98" stroke="#aaddff" stroke-width="1.5" opacity="0.4"/>
+  <line x1="34" y1="79" x2="82" y2="79" stroke="#aaddff" stroke-width="1.5" opacity="0.4"/>
+
+  <!-- Highlight -->
+  <line x1="22" y1="38" x2="22" y2="110" stroke="#ddeeff" stroke-width="1.5" opacity="0.5"/>
+  <line x1="22" y1="38" x2="94" y2="38" stroke="#ddeeff" stroke-width="1" opacity="0.4"/>
+</svg>

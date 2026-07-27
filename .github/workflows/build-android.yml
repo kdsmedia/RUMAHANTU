@@ -1,0 +1,128 @@
+name: Build Android APK
+
+# Runs on every push to main, or manually via the Actions tab.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# ── Update GODOT_VERSION to match your project.godot features string ──────────
+env:
+  GODOT_VERSION: "4.5"        # Change to your Godot version (e.g. 4.5, 4.6, 4.7)
+  GODOT_STATUS: "stable"      # stable | rc1 | beta1 etc.
+  EXPORT_PRESET: "Android 2"  # Preset name in export_presets.cfg
+  EXPORT_FILE: "rumahantu.apk"
+
+jobs:
+  build-android:
+    name: Export RUMAHANTU APK
+    runs-on: ubuntu-22.04
+
+    steps:
+      # ── 1. Source code ──────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # ── 2. Java (needed for keytool to generate keystore) ───────────────────
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      # ── 3. Godot headless binary ────────────────────────────────────────────
+      - name: Download Godot headless
+        run: |
+          BASE="https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-${GODOT_STATUS}"
+          ZIP="Godot_v${GODOT_VERSION}-${GODOT_STATUS}_linux.x86_64.zip"
+          echo "Downloading Godot ${GODOT_VERSION} (${GODOT_STATUS}) …"
+          wget -q "${BASE}/${ZIP}" -O godot.zip
+          unzip -q godot.zip
+          sudo mv "Godot_v${GODOT_VERSION}-${GODOT_STATUS}_linux.x86_64" /usr/local/bin/godot
+          sudo chmod +x /usr/local/bin/godot
+          godot --version
+
+      # ── 4. Android export templates ─────────────────────────────────────────
+      - name: Download Android export templates
+        run: |
+          BASE="https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-${GODOT_STATUS}"
+          TPZ="Godot_v${GODOT_VERSION}-${GODOT_STATUS}_export_templates.tpz"
+          echo "Downloading export templates …"
+          wget -q "${BASE}/${TPZ}" -O templates.tpz
+          TEMPLATES_DIR="${HOME}/.local/share/godot/export_templates/${GODOT_VERSION}.${GODOT_STATUS}"
+          mkdir -p "${TEMPLATES_DIR}"
+          unzip -q templates.tpz -d /tmp/templates_unzipped
+          mv /tmp/templates_unzipped/templates/* "${TEMPLATES_DIR}/"
+          echo "Templates installed to ${TEMPLATES_DIR}"
+          ls "${TEMPLATES_DIR}" | grep android || echo "(no android template found — check GODOT_VERSION)"
+
+      # ── 5. Debug keystore ───────────────────────────────────────────────────
+      - name: Generate Android debug keystore
+        run: |
+          mkdir -p ~/.android
+          keytool -genkey -v \
+            -keystore ~/.android/debug.keystore \
+            -storepass android \
+            -alias androiddebugkey \
+            -keypass android \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 10000 \
+            -dname "CN=Android Debug,O=Android,C=US" 2>/dev/null
+          echo "Debug keystore created."
+
+      # ── 6. Godot editor settings (keystore path) ────────────────────────────
+      - name: Write Godot editor settings
+        run: |
+          mkdir -p ~/.config/godot
+          cat > ~/.config/godot/editor_settings-4.tres << 'SETTINGS'
+          [gd_resource type="EditorSettings" format=3]
+          [resource]
+          export/android/debug_keystore = "/root/.android/debug.keystore"
+          export/android/debug_keystore_user = "androiddebugkey"
+          export/android/debug_keystore_pass = "android"
+          SETTINGS
+
+      # ── 7. Import all project assets ────────────────────────────────────────
+      - name: Import project assets
+        run: |
+          # --quit exits after import; ignore non-zero exit from headless quirks
+          godot --headless --import --quit 2>&1 | tail -30 || true
+          sleep 3
+
+      # ── 8. Export APK ───────────────────────────────────────────────────────
+      - name: Export APK
+        run: |
+          mkdir -p build
+          godot --headless \
+            --export-debug "${EXPORT_PRESET}" \
+            "$(pwd)/build/${EXPORT_FILE}" 2>&1
+          if [ -f "build/${EXPORT_FILE}" ]; then
+            echo "✅ APK built: $(du -sh build/${EXPORT_FILE})"
+          else
+            echo "❌ APK not found — check logs above."
+            exit 1
+          fi
+
+      # ── 9. Upload artifact ──────────────────────────────────────────────────
+      - name: Upload APK as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: RUMAHANTU-apk
+          path: build/${{ env.EXPORT_FILE }}
+          retention-days: 30
+          if-no-files-found: error
+
+      # ── 10. Create GitHub Release on version tags (optional) ────────────────
+      - name: Create release (on version tags only)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/${{ env.EXPORT_FILE }}
+          name: RUMAHANTU ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <linearGradient id="front" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff"/>
+      <stop offset="100%" style="stop-color:#cce8ff"/>
+    </linearGradient>
+    <linearGradient id="side" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#6699bb"/>
+      <stop offset="100%" style="stop-color:#3366aa"/>
+    </linearGradient>
+    <linearGradient id="bottom" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#3366aa"/>
+      <stop offset="100%" style="stop-color:#224488"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Drop shadow -->
+  <g opacity="0.25" transform="translate(5,6)">
+    <polygon points="64,10 90,50 76,50 76,106 52,106 52,50 38,50" fill="black"/>
+  </g>
+
+  <!-- RIGHT depth face of arrow stem -->
+  <polygon points="76,50 84,54 84,110 76,106" fill="url(#side)"/>
+  <!-- BOTTOM depth face of arrow stem -->
+  <polygon points="52,106 76,106 84,110 60,110" fill="url(#bottom)"/>
+
+  <!-- RIGHT depth face of arrow head -->
+  <polygon points="90,50 98,54 84,54 76,50" fill="url(#side)"/>
+
+  <!-- FRONT face: arrowhead + stem -->
+  <polygon points="64,10 90,50 76,50 76,106 52,106 52,50 38,50"
+           fill="url(#front)" filter="url(#glow)"/>
+
+  <!-- Highlight edge -->
+  <polyline points="38,50 64,10 90,50" fill="none" stroke="#aaddff" stroke-width="1.5" opacity="0.7"/>
+  <line x1="52" y1="50" x2="52" y2="106" stroke="#aaddff" stroke-width="1" opacity="0.5"/>
+</svg>
